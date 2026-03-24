@@ -29,51 +29,58 @@ depths = [
     100
 ]
 
-# Make the lists that will be used
+def analyze_image(filename):
+    """
+    Improvement made: The original code used three separate for-loops:
+    one to load images, one to count pixels, and one to calculate percentages.
+    That meant Python had to iterate over the entire list of filenames three times,
+    and all images had to be stored in memory simultaneously before any analysis began.
 
-images = []
-white_counts = []
-black_counts = []
-white_percents = []
-
-# Build the list of all the images you are analyzing
-
-for filename in filenames:
+    This function bundles all of that work together, loading, thresholding, counting,
+    and computing the percentage, so each image is fully processed and then discarded
+    from memory before moving on to the next one. This is more memory-efficient and
+    easier to read, debug, and maintain.
+    """
+    # Read the image in grayscale mode (0 = grayscale flag)
     img = cv2.imread(filename, 0)
-    images.append(img)
 
-# For each image (until the end of the list of images), calculate the number of black and white pixels and make a list that contains this information for each filename.
+    # Apply binary threshold: pixels above 127 become 255 (white), others become 0 (black)
+    _, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)
 
-for x in range(len(filenames)):
-    _, binary = cv2.threshold(images[x], 127, 255, cv2.THRESH_BINARY)
+    # Count white and black pixels
+    white = int(np.sum(binary == 255))
+    black = int(np.sum(binary == 0))
 
-    white = np.sum(binary == 255)
-    black = np.sum(binary == 0)
+    # Calculate the percentage of white pixels out of all pixels
+    white_percent = 100 * white / (white + black)
 
-    white_counts.append(white)
-    black_counts.append(black)
+    return white, black, white_percent
 
-# Print the number of white and black pixels in each image.
 
-print(colored("Counts of pixel by color in each image", "yellow"))
-for x in range(len(filenames)):
-    print(colored(f"White pixels in image {x}: {white_counts[x]}", "white"))
-    print(colored(f"Black pixels in image {x}: {black_counts[x]}", "black"))
+# Improvement made: Instead of three separate for-loops, this single list
+# comprehension calls analyze_image() on every filename in one pass. The original code
+# looped over the filenames once to load images, again to count pixels, and again to
+# calculate percentages — unnecessarily repeating the same iteration three times.
+results = [analyze_image(f) for f in filenames]
+
+# Improvement made: zip(*results) unpacks all three return values from
+# analyze_image() into separate tuples in one line. The original code built up
+# white_counts, black_counts, and white_percents by appending to empty lists inside
+# separate loops — more verbose and slower than unpacking everything at once here.
+white_counts, black_counts, white_percents = zip(*results)
+
+# Print the white and black pixel counts for each image
+print(colored("Counts of pixels by color in each image", "yellow"))
+for i, filename in enumerate(filenames):
+    print(colored(f"White pixels in image {i}: {white_counts[i]}", "white"))
+    print(colored(f"Black pixels in image {i}: {black_counts[i]}", "white"))
     print()
 
-# Calculate the percentage of pixels in each image that are white and make a list that contains these percentages for each filename
-
-for x in range(len(filenames)):
-    white_percent = (
-        100 * (white_counts[x] / (black_counts[x] + white_counts[x])))
-    white_percents.append(white_percent)
-
-# Print the filename (on one line in red font), and below that line print the percent white pixels and depth into the lung where the image was obtained
-
+# Print the filename, white pixel percentage, and depth for each image
 print(colored("Percent white px:", "yellow"))
-for x in range(len(filenames)):
-    print(colored(f'{filenames[x]}:', "red"))
-    print(f'{white_percents[x]}% White | Depth: {depths[x]} microns')
+for i, filename in enumerate(filenames):
+    print(colored(f'{filename}:', "red"))
+    print(f'{white_percents[i]:.4f}% White | Depth: {depths[i]} microns')
     print()
 
 '''Write your data to a .csv file'''
@@ -92,6 +99,9 @@ df.to_csv('Percent_White_Pixels.csv', index=False)
 print("The .csv file 'Percent_White_Pixels.csv' has been created.")
 
 '''the .csv writing subroutine ends here'''
+
+# Used Claude to help fix the code and tell us how teh changes given were imporvements
+# Anthropic. (2025). Claude. Claude.ai. https://claude.ai/new
 
 
 ##############
