@@ -1,5 +1,8 @@
 '''Module 3: count black and white pixels and compute the percentage of white pixels in a .jpg image and extrapolate points'''
 
+# Used Claude to help fix/optimize the code and tell us how the changes given were imporvements
+# Anthropic. (2025). Claude. Claude.ai. https://claude.ai/new
+
 from termcolor import colored
 import cv2
 import numpy as np
@@ -100,8 +103,7 @@ print("The .csv file 'Percent_White_Pixels.csv' has been created.")
 
 '''the .csv writing subroutine ends here'''
 
-# Used Claude to help fix the code and tell us how teh changes given were imporvements
-# Anthropic. (2025). Claude. Claude.ai. https://claude.ai/new
+
 
 
 ##############
