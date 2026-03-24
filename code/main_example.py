@@ -1,24 +1,25 @@
 '''Module 3: count black and white pixels and compute the percentage of white pixels in a .jpg image and extrapolate points'''
 
-# Used Claude to help fix/optimize the code and tell us how the changes given were imporvements
-# Anthropic. (2025). Claude. Claude.ai. https://claude.ai/new
-
 from termcolor import colored
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import interp1d
 import pandas as pd
+import time
 
 # Load the images you want to analyze
 
+# Start time
+start = time.time()
+
 filenames = [
-    r"../images/MASK_Sk658 Llobe ch010017.jpg",
-    r"../images/MASK_Sk658 Llobe ch010018.jpg",
-    r"../images/MASK_Sk658 Llobe ch010019.jpg",
-    r"../images/MASK_Sk658 Llobe ch010021.jpg",
-    r"../images/MASK_Sk658 Llobe ch010022.jpg",
-    r"../images/MASK_Sk658 Llobe ch010023.jpg",
+    r"/Users/abhiramruthala/Module-3-Fibrosis/images/MASK_Sk658 Llobe ch010017.jpg",
+    r"/Users/abhiramruthala/Module-3-Fibrosis/images/MASK_Sk658 Llobe ch010018.jpg",
+    r"/Users/abhiramruthala/Module-3-Fibrosis/images/MASK_Sk658 Llobe ch010019.jpg",
+    r"/Users/abhiramruthala/Module-3-Fibrosis/images/MASK_Sk658 Llobe ch010021.jpg",
+    r"/Users/abhiramruthala/Module-3-Fibrosis/images/MASK_Sk658 Llobe ch010022.jpg",
+    r"/Users/abhiramruthala/Module-3-Fibrosis/images/MASK_Sk658 Llobe ch010023.jpg",
 ]
 
 # Enter the depth of each image (in the same order that the images are listed above; you can find these in the .csv file provided to you which is tilted: "Filenames and Depths for Students")
@@ -103,7 +104,16 @@ print("The .csv file 'Percent_White_Pixels.csv' has been created.")
 
 '''the .csv writing subroutine ends here'''
 
+# End time
+end = time.time()
 
+# Print time
+print(f"Time taken to write .csv file: {end - start} seconds")
+
+# Takes about 95 seconds to get 10,000 images.
+
+# Used Claude to help fix the code and tell us how the changes given were improvements
+# Anthropic. (2025). Claude. Claude.ai. https://claude.ai/new
 
 
 ##############
